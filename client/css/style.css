@@ -125,7 +125,7 @@ width: 16px; height: 16px;
 	xborder-left: dashed #19ba98 5px;
 	text-align: center;
 	vertical-align: top;
-	height: 100%;
+	height: 60%;
 	xopacity: 1;
 	background-image: url('../images/green-board-line.png');
 	background-repeat: repeat-y;
@@ -136,9 +136,22 @@ width: 16px; height: 16px;
 	border-left: none;
 	text-align: center;
 	vertical-align: top;
-	height: 100%;
-	background-image: none;
+	height: 60%;
+	background-image: url('../images/green-board-line.png');
 
+}
+
+.carpoolcol {
+	width: 2%;
+}
+
+.carpooltable {
+	width: 1px;
+	height: 100%;
+	/*border: 1px solid black;*/
+	text-align: center;
+	vertical-align: middle;
+    white-space: nowrap;
 }
 
 h1, h1 a {
@@ -594,14 +607,14 @@ img {
 
 
 /* states and images */
-.ui-icon { width: 16px; height: 16px; background-image: url(../images/ui-icons_222222_256x240.png); }
-.ui-widget-content .ui-icon {background-image: url(../images/ui-icons_222222_256x240.png); }
-.ui-widget-header .ui-icon {background-image: url(../images/ui-icons_222222_256x240.png); }
-.ui-state-default .ui-icon { background-image: url(../images/ui-icons_888888_256x240.png); }
-.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(../images/ui-icons_454545_256x240.png); }
-.ui-state-active .ui-icon {background-image: url(../images/ui-icons_454545_256x240.png); }
-.ui-state-highlight .ui-icon {background-image: url(../images/ui-icons_2e83ff_256x240.png); }
-.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(../images/ui-icons_cd0a0a_256x240.png); }
+.ui-icon { width: 16px; height: 16px; background-image: url(./images/ui-icons_222222_256x240.png); }
+.ui-widget-content .ui-icon {background-image: url(./images/ui-icons_222222_256x240.png); }
+.ui-widget-header .ui-icon {background-image: url(./images/ui-icons_222222_256x240.png); }
+.ui-state-default .ui-icon { background-image: url(./images/ui-icons_888888_256x240.png); }
+.ui-state-hover .ui-icon, .ui-state-focus .ui-icon {background-image: url(./images/ui-icons_454545_256x240.png); }
+.ui-state-active .ui-icon {background-image: url(./images/ui-icons_454545_256x240.png); }
+.ui-state-highlight .ui-icon {background-image: url(./images/ui-icons_2e83ff_256x240.png); }
+.ui-state-error .ui-icon, .ui-state-error-text .ui-icon {background-image: url(./images/ui-icons_cd0a0a_256x240.png); }
 
 
 .ui-resizable { position: relative;}

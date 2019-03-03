@@ -1,3 +1,20 @@
+locationpanel (forked from aliasaria/scrumblr)
+========
+The board was extended to the position determination of vehicles.
+
+how to install and run on your own computer (linux/osx/windows)
+-------------------------------------------------------
+
+- [install mongodb](https://www.mongodb.com/) (last tested on v4.0.6)
+- [install node.js](https://www.nodejs.org/) (last tested on v10.13.0)
+- cd to the locationpanel directory; you should see server.js and config.js and other files.
+- run `npm install`
+- import the initial db data in database `locationpanel` (default), collection `rooms` from `./lib/data/mongodb_initialdata.json`
+- run mongodb `mongod`
+- run locationpanel `node server.js --port 8080` where "8080" is the port you have opened in your firewall and want scrumblr to run on. 
+- open a browser to `http://<server>:<port>` where `<server>` is your server's url or IP address, and `<port>` is the port you chose in the previous step.
+
+
 scrumblr
 ========
 

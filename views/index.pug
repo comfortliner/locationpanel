@@ -1,0 +1,34 @@
+extends layout
+
+block body
+	- let cars = ['KZ_KFZKZ111', 'KZ_KFZKZ222', 'KZ_KFZKZ333', 'KZ_KFZKZ444', 'KZ_KFZKZ555'];
+
+	//div.config
+	//	i.fa.fa-cog.fa-lg.faded-icon
+
+	h1 locationpanel forked from scrumblr by aliasaria
+
+	div.board-outline
+		div#board
+			div#board-doodles
+			image#marker(src='images/marker.png')
+			image#eraser(src='images/eraser.png')
+
+
+			table#board-table.board-table
+				tr
+					td.carpoolcol
+						table.carpooltable
+							each val in cars
+								tr
+									td(id= val) ___ ___ ___ <br> <span style='font-size:8pt'>XX-XX 000</span>
+									td
+										image(width='30', height='30', src='images/icons/iconic/raster/black/key_32x32.png')
+
+					td#icon-col(width='1%')
+
+	div.buttons
+
+	div.stickers
+
+	div.names

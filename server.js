@@ -2,13 +2,12 @@
  SYSTEM INCLUDES
 **************/
 var	http = require('http');
-var sys = require('sys');
+var util = require('util');
 var	async = require('async');
 var sanitizer = require('sanitizer');
 var compression = require('compression');
 var express = require('express');
 var conf = require('./config.js').server;
-var ga = require('./config.js').googleanalytics;
 
 /**************
  LOCAL INCLUDES
@@ -31,9 +30,6 @@ var router = express.Router();
 app.use(compression());
 app.use(conf.baseurl, router);
 
-app.locals.ga = ga.enabled;
-app.locals.gaAccount = ga.account;
-
 router.use(express.static(__dirname + '/client'));
 
 var server = require('http').Server(app);
@@ -52,30 +48,9 @@ var io = require('socket.io')(server, {
 /**************
  ROUTES
 **************/
-router.get('/', function(req, res) {
-	//console.log(req.header('host'));
-	url = req.header('host') + req.baseUrl;
-
-	var connected = io.sockets.connected;
-	clientsCount = Object.keys(connected).length;
-
-	res.render('home.jade', {
-		url: url,
-		connected: clientsCount
-	});
-});
-
-
-router.get('/demo', function(req, res) {
-	res.render('index.jade', {
-		pageTitle: 'scrumblr - demo',
-		demo: true
-	});
-});
-
 router.get('/:id', function(req, res){
-	res.render('index.jade', {
-		pageTitle: ('scrumblr - ' + req.params.id)
+	res.render('index.pug', {
+		pageTitle: ('locpanel - ' + req.params.id)
 	});
 });
 
@@ -106,7 +81,7 @@ io.sockets.on('connection', function (client) {
 
 
 	client.on('message', function( message ){
-		//console.log(message.action + " -- " + sys.inspect(message.data) );
+		//console.log(message.action + " -- " + util.inspect(message.data) );
 
 		var clean_data = {};
 		var clean_message = {};
@@ -302,6 +277,38 @@ io.sockets.on('connection', function (client) {
 				broadcastToRoom( client, { action: 'setBoardSize', data: size } );
 				break;
 
+			case 'clickCarpool':
+				var carId = scrub(message.data.carId),
+					location = null;
+					
+
+				getRoom(client, function(room) {
+					db.getAllCars(room, function(cars) {
+						
+						// get location of carId and increment [0 -> 1 -> 2 -> 0 -> 1 -> ...]
+						Object.keys(cars).forEach(function(key){
+							if (key==carId) {
+								location = cars[key].location;
+
+								if (typeof location != "undefined" && location !== null) {
+									location++;
+									if (location === 3) {
+										location = 0;
+									}
+								} else {
+									return false;
+								}
+
+								cars[key].location = location;
+							}
+						});
+
+						db.setCarLocation(room, carId, location);
+						broadcastAllRoom( room, { action: 'clickCarpool', data: cars } );
+					});
+				});
+				break;
+
 			default:
 				//console.log('unknown action');
 				break;
@@ -399,6 +406,17 @@ function initClient ( client )
 			}
 		);
 
+		db.getAllCars( room , function (cars) {
+
+			client.json.send(
+				{
+					action: 'clickCarpool',
+					data: cars
+				}
+			);
+
+		});
+
 	});
 }
 
@@ -422,6 +440,10 @@ function leaveRoom (client)
 	rooms.remove_from_all_rooms_and_announce(client, msg);
 
 	delete sids_to_user_names[client.id];
+}
+
+function broadcastAllRoom ( room, message ) {
+	rooms.broadcast_room(room, message);
 }
 
 function broadcastToRoom ( client, message ) {
@@ -471,24 +493,24 @@ function setUserName ( client, name )
 function cleanAndInitializeDemoRoom()
 {
 	// DUMMY DATA
-	db.clearRoom('/demo', function() {
-		db.createColumn( '/demo', 'Not Started' );
-		db.createColumn( '/demo', 'Started' );
-		db.createColumn( '/demo', 'Testing' );
-		db.createColumn( '/demo', 'Review' );
-		db.createColumn( '/demo', 'Complete' );
+	// db.clearRoom('/demo', function() {
+	// 	db.createColumn( '/demo', 'Not Started' );
+	// 	db.createColumn( '/demo', 'Started' );
+	// 	db.createColumn( '/demo', 'Testing' );
+	// 	db.createColumn( '/demo', 'Review' );
+	// 	db.createColumn( '/demo', 'Complete' );
 
 
-		createCard('/demo', 'card1', 'Hello this is fun', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'yellow');
-		createCard('/demo', 'card2', 'Hello this is a new story.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'white');
-		createCard('/demo', 'card3', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'blue');
-		createCard('/demo', 'card4', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'green');
+	// 	createCard('/demo', 'card1', 'Hello this is fun', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'yellow');
+	// 	createCard('/demo', 'card2', 'Hello this is a new story.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'white');
+	// 	createCard('/demo', 'card3', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'blue');
+	// 	createCard('/demo', 'card4', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'green');
 
-		createCard('/demo', 'card5', 'Hello this is fun', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'yellow');
-		createCard('/demo', 'card6', 'Hello this is a new card.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'yellow');
-		createCard('/demo', 'card7', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'blue');
-		createCard('/demo', 'card8', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'green');
-	});
+	// 	createCard('/demo', 'card5', 'Hello this is fun', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'yellow');
+	// 	createCard('/demo', 'card6', 'Hello this is a new card.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'yellow');
+	// 	createCard('/demo', 'card7', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'blue');
+	// 	createCard('/demo', 'card8', '.', roundRand(600), roundRand(300), Math.random() * 10 - 5, 'green');
+	// });
 }
 //
 

@@ -1,7 +1,7 @@
 var cards = {};
 var totalcolumns = 0;
 var columns = [];
-var currentTheme = "bigcards";
+var currentTheme = "smallcards";
 var boardInitialized = false;
 var keyTrap = null;
 
@@ -147,6 +147,10 @@ function getMessage(m) {
             resizeBoard(message.data);
             break;
 
+        case 'clickCarpool':
+            setCarpools(data);
+            break;
+
         default:
             //unknown message
             alert('unknown action: ' + JSON.stringify(message));
@@ -246,7 +250,8 @@ function drawNewCard(id, text, x, y, rot, colour, sticker, animationspeed) {
     var speed = Math.floor(Math.random() * 1000);
     if (typeof(animationspeed) != 'undefined') speed = animationspeed;
 
-    var startPosition = $("#create-card").position();
+    //var startPosition = $("#create-card").position();
+    var startPosition = {top: 522, left:18};
 
     card.css('top', startPosition.top - card.height() * 0.5);
     card.css('left', startPosition.left - card.width() * 0.5);
@@ -529,6 +534,24 @@ function changeThemeTo(theme) {
     $("link[title=cardsize]").attr("href", "css/" + theme + ".css");
 }
 
+//----------------------------------
+// cars
+//----------------------------------
+
+function setCarpools(carObj) {
+    var location = [
+        " <span style='font-size:16pt' class='icon'></span> ___ ___",
+        " ___ <span style='font-size:16pt' class='icon'></span> ___",
+        " ___ ___ <span style='font-size:16pt' class='icon'></span>"
+    ],
+    str = '';
+
+    Object.keys(carObj).forEach(function(key) {
+        str = location[carObj[key].location]+" <br> <span style='font-size:8pt'>"+carObj[key].tag+"</span>";
+        $('td#KZ_'+key).html(str.replace("icon", carObj[key].icon));
+    });
+
+}
 
 //////////////////////////////////////////////////////////
 ////////// NAMES STUFF ///////////////////////////////////
@@ -808,8 +831,8 @@ $(function() {
         ghost: false,
         minWidth: 700,
         minHeight: 400,
-        maxWidth: 3200,
-        maxHeight: 1800,
+        maxWidth: 1400, //3200,
+        maxHeight: 800 //1800
     });
 
     //A new scope for precalculating
@@ -840,5 +863,12 @@ $(function() {
         containment: 'parent'
     });
 
+    $('td[id^="KZ_"]').click(function() {
+        var data = {
+                carId: $(this).closest('td').attr('id').replace('KZ_', '')
+            };
+
+        sendAction('clickCarpool', data);
+    });
 
 });
