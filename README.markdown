@@ -14,6 +14,7 @@ how to install and run on your own computer (linux/osx/windows)
 - run locationpanel `node server.js --port 8080` where "8080" is the port you have opened in your firewall and want scrumblr to run on. 
 - open a browser to `http://<server>:<port>` where `<server>` is your server's url or IP address, and `<port>` is the port you chose in the previous step.
 
+![locationpanel](https://github.com/comfortliner/images/blob/master/locationpanel.png)
 
 scrumblr
 ========
