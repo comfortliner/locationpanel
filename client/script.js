@@ -283,6 +283,7 @@ function drawNewCard(id, text, x, y, rot, colour, sticker, animationspeed) {
 
     card.children('.delete-card-icon').click(
         function() {
+            return true;
             $("#" + id).remove();
             //notify server of delete
             sendAction('deleteCard', {
@@ -291,18 +292,18 @@ function drawNewCard(id, text, x, y, rot, colour, sticker, animationspeed) {
         }
     );
 
-    card.children('.content').editable(function(value, settings) {
-        onCardChange(id, value);
-        return (value);
-    }, {
-        type: 'textarea',
-        submit: 'OK',
-        style: 'inherit',
-        cssclass: 'card-edit-form',
-        placeholder: 'Double Click to Edit.',
-        onblur: 'submit',
-        event: 'dblclick', //event: 'mouseover'
-    });
+    // card.children('.content').editable(function(value, settings) {
+    //     onCardChange(id, value);
+    //     return (value);
+    // }, {
+    //     type: 'textarea',
+    //     submit: 'OK',
+    //     style: 'inherit',
+    //     cssclass: 'card-edit-form',
+    //     placeholder: 'Double Click to Edit.',
+    //     onblur: 'submit',
+    //     event: 'dblclick', //event: 'mouseover'
+    // });
 
     //add applicable sticker
     if (sticker !== null)
@@ -311,6 +312,7 @@ function drawNewCard(id, text, x, y, rot, colour, sticker, animationspeed) {
 
 
 function onCardChange(id, text) {
+    return true;
     sendAction('editCard', {
         id: id,
         value: text
@@ -370,7 +372,7 @@ function createCard(id, text, x, y, rot, colour) {
 }
 
 function randomCardColour() {
-    var colours = ['yellow', 'green', 'blue', 'white'];
+    var colours = ['yellow', 'green', 'blue', 'white', 'red'];
 
     var i = Math.floor(Math.random() * colours.length);
 
@@ -418,20 +420,20 @@ function drawNewColumn(columnName) {
         '" width="10%" style="display:none"><h2 id="col-' + (totalcolumns + 1) +
         '" class="editable">' + columnName + '</h2></td>');
 
-    $('.editable').editable(function(value, settings) {
-        onColumnChange(this.id, value);
-        return (value);
-    }, {
-        style: 'inherit',
-        cssclass: 'card-edit-form',
-        type: 'textarea',
-        placeholder: 'New',
-        onblur: 'submit',
-        width: '',
-        height: '',
-        xindicator: '<img src="images/ajax-loader.gif">',
-        event: 'dblclick', //event: 'mouseover'
-    });
+    // $('.editable').editable(function(value, settings) {
+    //     onColumnChange(this.id, value);
+    //     return (value);
+    // }, {
+    //     style: 'inherit',
+    //     cssclass: 'card-edit-form',
+    //     type: 'textarea',
+    //     placeholder: 'New',
+    //     onblur: 'submit',
+    //     width: '',
+    //     height: '',
+    //     xindicator: '<img src="images/ajax-loader.gif">',
+    //     event: 'dblclick', //event: 'mouseover'
+    // });
 
     $('.col:last').fadeIn(1500);
 
@@ -499,6 +501,7 @@ function deleteColumn() {
 }
 
 function updateColumns(c) {
+    return true;
     columns = c;
 
     var action = "updateColumns";
