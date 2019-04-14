@@ -10,6 +10,7 @@
   "dependencies": {
     "async": "2.6.2",
     "compression": "1.7.3",
+    "cron": "1.7.0",
     "express": "4.16.4",
     "mongodb": "2.2.36",
     "pug": "2.0.3",

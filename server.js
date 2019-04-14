@@ -8,6 +8,14 @@ var sanitizer = require('sanitizer');
 var compression = require('compression');
 var express = require('express');
 var conf = require('./config.js').server;
+var CronJob = require('cron').CronJob;
+
+/**************
+ CRON JOBS
+**************/
+new CronJob('50 59 23 * * *', function() {
+	resetCardsPosition('/ihd');
+}, null, true, 'Europe/Berlin');
 
 /**************
  LOCAL INCLUDES
@@ -25,6 +33,8 @@ var sids_to_user_names = [];
  SETUP EXPRESS
 **************/
 var app = express();
+app.set('case sensitive routing', false);
+
 var router = express.Router();
 
 app.use(compression());
@@ -382,6 +392,17 @@ function initClient ( client )
 			}
 		});
 
+		db.getAllCars( room , function (cars) {
+
+			client.json.send(
+				{
+					action: 'clickCarpool',
+					data: cars
+				}
+			);
+
+		});
+
 		roommates_clients = rooms.room_clients(room);
 		roommates = [];
 
@@ -405,18 +426,6 @@ function initClient ( client )
 				data: roommates
 			}
 		);
-
-		db.getAllCars( room , function (cars) {
-
-			client.json.send(
-				{
-					action: 'clickCarpool',
-					data: cars
-				}
-			);
-
-		});
-
 	});
 }
 
@@ -465,11 +474,57 @@ function createCard( room, id, text, x, y, rot, colour ) {
 	db.createCard(room, id, card);
 }
 
-function roundRand( max )
-{
-	return Math.floor(Math.random() * max);
-}
+// function roundRand( max )
+// {
+// 	return Math.floor(Math.random() * max);
+// }
 
+function resetCardsPosition(room) {
+	function closureReset(room, callback) {
+		var counterXaxis = 0,
+		counterYaxis = 0,
+		distanceToNextCardinXaxis = 80,
+		distanceToNextCardinYaxis = 50,
+		maxCardsinXaxis = 4,
+		offsetLeft = 700;
+
+		db.getBoardSize(room, function(size) {
+			if (size !== null) {
+				offsetLeft = size.width * 0.75;
+
+				db.getAllCards(room , function(cards) {
+					for (var card in cards) {
+						var message = {
+							data: {
+								'id': cards[card].id,
+								'position': {
+									'left': offsetLeft + (counterXaxis * distanceToNextCardinXaxis),
+									'top': 60 + (counterYaxis * distanceToNextCardinYaxis)
+								}
+							}
+						};
+
+						db.cardSetXY(room , message.data.id, message.data.position.left, message.data.position.top);
+
+						counterXaxis++;
+						if (counterXaxis === maxCardsinXaxis) {
+							counterXaxis = 0;
+							counterYaxis++;
+						}
+					}
+					setTimeout(callback, 10000);
+				});
+			}
+		});
+	};
+
+	closureReset(room, function() {
+		db.getAllCards(room, function(cards) {
+			broadcastAllRoom(room, {action: 'initCards', data: cards});
+			console.log(new Date(), 'Cards position resetted in room', room);
+		});
+	});
+}
 
 
 //------------ROOM STUFF

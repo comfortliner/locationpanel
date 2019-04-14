@@ -217,6 +217,10 @@ function drawNewCard(id, text, x, y, rot, colour, sticker, animationspeed) {
             return;
         }
 
+        if (ui.position.top < 0) {
+            ui.position.top = 0;
+        }
+
         var data = {
             id: this.id,
             position: ui.position,
@@ -702,6 +706,47 @@ function adjustCard(offsets, doSync) {
     });
 }
 
+// function resetCardsPosition() {
+//     var counterXaxis = 0,
+//         counterYaxis = 0,
+//         distanceToNextCardinXaxis = 80,
+//         distanceToNextCardinYaxis = 50,
+//         maxCardsinXaxis = 4,
+//         offsetLeft = 700;
+
+//     // left edge of column 4 (should be the last column) as starting position
+//     $(".col").each(function(i) {
+//         if (this.cellIndex === 4) {
+//             offsetLeft = this.offsetLeft;
+//         }
+//     });
+
+//     $(".card").each(function() {
+//         var card = $(this),
+//             data = {};
+
+//         data = {
+//             id: this.id,
+//             position: {
+//                 left: offsetLeft + (counterXaxis * distanceToNextCardinXaxis),
+//                 top: 60 + (counterYaxis * distanceToNextCardinYaxis)
+//             },
+//             oldposition: {
+//                 left: parseInt(card.css('left').slice(0, -2)),
+//                 top: parseInt(card.css('top').slice(0, -2))
+//             }
+//         }
+
+//         moveCard(card, data.position);
+//         sendAction('moveCard', data);
+
+//         counterXaxis++;
+//         if (counterXaxis === maxCardsinXaxis) {
+//             counterXaxis = 0;
+//             counterYaxis++;
+//         }
+//     });
+// }
 //////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////
 
@@ -731,7 +776,10 @@ $(function() {
                 randomCardColour());
         });
 
-
+    // $("#reset-cards-position")
+    //     .click(function() {
+    //         resetCardsPosition();
+    //     });
 
     // Style changer
     $("#smallify").click(function() {
